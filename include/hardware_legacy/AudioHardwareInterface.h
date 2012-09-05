@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (c) 2012, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,6 +119,13 @@ public:
     virtual status_t    getNextWriteTimestamp(int64_t *timestamp);
 #endif
 
+#ifdef QCOM_HARDWARE
+    virtual status_t    start() {return INVALID_OPERATION;}
+    virtual status_t    pause()  {return INVALID_OPERATION;}
+    virtual status_t    flush()  {return INVALID_OPERATION;}
+    virtual status_t    stop()  {return INVALID_OPERATION;}
+    virtual int         setObserver(void *observer)  {return INVALID_OPERATION;}
+#endif
 };
 
 /**
@@ -211,6 +219,11 @@ public:
     /** set the audio volume of a voice call. Range is between 0.0 and 1.0 */
     virtual status_t    setVoiceVolume(float volume) = 0;
 
+#ifdef QCOM_FM_ENABLED
+    /** set the fm volume. Range is between 0.0 and 1.0 */
+    virtual status_t    setFmVolume(float volume) { return 0; }
+#endif
+
     /**
      * set the audio volume for all audio activities other than voice call.
      * Range between 0.0 and 1.0. If any value other than NO_ERROR is returned,
@@ -248,6 +261,9 @@ public:
     /** This method creates and opens the audio hardware output stream */
     virtual AudioStreamOut* openOutputStream(
                                 uint32_t devices,
+#ifdef QCOM_HARDWARE
+                                audio_output_flags_t flags,
+#endif
                                 int *format=0,
                                 uint32_t *channels=0,
                                 uint32_t *sampleRate=0,
